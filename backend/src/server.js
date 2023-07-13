@@ -70,6 +70,7 @@ const db = require("mongoose");
 // const urlencoded = require("body-parser").urlencoded({ extended: true });
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const router = require("../routes");
 
 const app = express();
 
@@ -77,13 +78,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-// Mount the routes at /resources URL Path
-// app.use("/", routes);
-
-// Handle errors
-// app.use((error, req, res) => {
-//   res.status(500).json({ message: error.message });
-// });
+app.use("/",router);
 
 // Connect to the database
 db.connect(process.env.MONGODB_URL)
@@ -98,3 +93,6 @@ db.connect(process.env.MONGODB_URL)
   .catch(() => {
     console.log("Error in connecting to database");
   });
+
+
+  
