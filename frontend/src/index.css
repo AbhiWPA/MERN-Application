@@ -1,12 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@tailwind variants;
-
-@layer base {
-  body {
-    @apply bg-gray-400;
-  }   
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 
