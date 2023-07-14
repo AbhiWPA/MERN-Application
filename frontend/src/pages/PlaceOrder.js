@@ -1,11 +1,15 @@
 import React from 'react'
 import Layout from '../components/Layout/Layout'
+import Header from '../components/Layout/Header'
 
 const PlaceOrder = () => {
   return (
-    <Layout>
+    
+    <>
+      <Header />
       <h1>Place Order</h1>
-    </Layout>
+    </>
+
   )
 }
 

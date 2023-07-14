@@ -1,11 +1,12 @@
 import React from 'react'
-import Layout from '../components/Layout/Layout'
+import Header from '../components/Layout/Header'
 
 const Items = () => {
   return (
-    <Layout>
-        <h1>Items Page</h1>
-    </Layout>
+    <>
+      <Header />
+      <h1>Items Page</h1>
+    </>
   )
 }
 
