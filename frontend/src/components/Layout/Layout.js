@@ -13,7 +13,7 @@ const Layout = () => {
     <>
        <Header /> 
 
-  <main>
+  <main className='!mt-20 '>
   <Routes>
     <Route path='/' element={<Home/>}/>
     <Route path='/about' element={<About/>}/>

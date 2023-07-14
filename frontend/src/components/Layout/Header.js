@@ -7,11 +7,11 @@ import {Link} from 'react-router-dom'
 const Header = () => {
   return (
     <>
-    <Box>
+    <Box className="!h-20 !fixed">
       <AppBar component={'nav'} sx={{fontSize: 100}} className='!bg-slate-950 !shadow-2xl !shadow-black'>
         <Toolbar>
-          <Typography className='!font-bold !text-2xl !mt-3 text-orange-400' component={'div'} sx={{flexGrow:1}}>
-            <StorefrontIcon  className='!mr-2 mb-1'/>
+          <Typography className='!font-bold !text-2xl !mt-2 text-orange-400' component={'div'} sx={{flexGrow:1}}>
+            <StorefrontIcon  className='!mr-2 mb-2'/>
             Grocery Shop
           </Typography>
           <Box> 
