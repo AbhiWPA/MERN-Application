@@ -10,7 +10,7 @@ import Layout from './components/Layout/Layout'
 
 function App() {
   return (
-    <div className="App h-screen">
+    <div className="App h-80">
      <Layout/> 
     </div>
   );

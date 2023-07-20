@@ -3,10 +3,10 @@ import Header from '../components/Layout/Header'
 
 const Items = () => {
   return (
-    <>
+    <div>
       <Header />
-      <h1>Items Page</h1>
-    </>
+      
+    </div>
   )
 }
 
