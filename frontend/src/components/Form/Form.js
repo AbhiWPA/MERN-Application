@@ -2,6 +2,11 @@ import { Button, TextField, createTheme } from "@mui/material";
 import React, { FormEvent } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 // import { TextFieldDetails } from "../../types/TextFieldDetails";
 // import { ButtonDetails } from "../../types/ButtonDetails";
@@ -18,22 +23,37 @@ const Form = (props) => {
     <section className="pb-6 px-6 lg:px-12">
       <form className="grid grid-cols-1 lg:grid-cols-3 gap-6 !font-poppins">
         {props.textFieldsArray.map((textField, index) => (
+          textField.textFieldType == "select" ? <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Customer ID</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={Select.value}
+            label={Select.label}
+            // onChange={handleChange}
+          >
+            {/* <MenuItem value={10}>Ten</MenuItem>
+            <MenuItem value={20}>Twenty</MenuItem>
+            <MenuItem value={30}>Thirty</MenuItem> */}
+          </Select>
+        </FormControl>
+          :
           <TextField
-            key={index}
-            label={textField.label}
-            type={textField.textFieldType}
-            variant="outlined"
-            name={textField.name}
-            placeholder={textField.placeHolderText}
-            required
-            defaultValue={textField.defaultValue}
-            value={textField.value}
-            onChange={textField.onChange}
-            focused={textField.focused}
-            InputProps={{
-              readOnly: textField.readOnly,
-            }}
-          />
+          key={index}
+          label={textField.label}
+          type={textField.textFieldType}
+          variant="outlined"
+          name={textField.name}
+          placeholder={textField.placeHolderText}
+          required
+          defaultValue={textField.defaultValue}
+          value={textField.value}
+          onChange={textField.onChange}
+          focused={textField.focused}
+          InputProps={{
+            readOnly: textField.readOnly,
+          }}
+        />
         ))}
 
         {/* --------------------------------------------- */}
