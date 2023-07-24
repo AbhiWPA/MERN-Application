@@ -1,15 +1,32 @@
 import React, { useEffect, useState } from 'react'
-import Layout from '../components/Layout/Layout'
 import Header from '../components/Layout/Header'
 import Form from '../components/Form/Form'
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import AutorenewIcon from "@mui/icons-material/Autorenew";
-import DeleteIcon from "@mui/icons-material/Delete";
-import BackspaceIcon from "@mui/icons-material/Backspace";
 import Table from '../components/Table/Table';
+import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
+import BackspaceIcon from "@mui/icons-material/Backspace";
+import AddShoppingCartRoundedIcon from '@mui/icons-material/AddShoppingCartRounded';
 import { Link } from 'react-router-dom';
+import { Button, Input} from '@mui/material';
+import ConfirmationNumberRoundedIcon from '@mui/icons-material/ConfirmationNumberRounded';
+
 
 const PlaceOrder = () => {
+
+  const [allCustomersList, setAllCustomersList] = useState([]);
+
+  const handleTableRowClick = (tableRow) => {
+    console.log(tableRow);
+  }
+
+  const tblHeaders = ["Header 1", "Header 2", "Header 3"];
+  const tblData = [
+    ["Data 1", "Data 2", "Data 3"],
+    ["Data 4", "Data 5", "Data 6"],
+    // Add more data rows as needed
+  ];
+
+const tableHeight = "300px";
+
   return (
     
     <>
@@ -26,7 +43,7 @@ const PlaceOrder = () => {
 
 
 {/* ------------------------------------------------------------------------------------- */}
-        <div className='columns-2 flex space-x-4 h-64 max-w-7xl left-0 right-0 m-auto'>
+        <div className='columns-2 flex space-x-4 h-72 max-w-7xl left-0 right-0 m-auto'>
 
           <div className='columns-2xl bg-red-100 h-72 shadow-lg shadow-slate-700 rounded-lg'>
             <h3 className='ml-3 text-xl text-red-600 font-sans font-bold'>Invoce Details</h3>
@@ -112,20 +129,19 @@ const PlaceOrder = () => {
 
           ]}
 
-          buttonsArray={[
+          buttonsArray={[    
+            {
+              color: "success",
+              icon: <PersonAddAlt1RoundedIcon />,
+              text: "Add New Customer",
+              // onClick: handleSaveCustomer,
+            },
 
             {
               color: "error",
-              icon: <DeleteIcon />,
+              icon: <BackspaceIcon />,
               text: "Clear",
               // onClick: handleDeleteCustomer,
-            },
-    
-            {
-              color: "success",
-              icon: <AddCircleIcon />,
-              text: "Add New Customer",
-              // onClick: handleSaveCustomer,
             },
 
           ]}
@@ -198,19 +214,18 @@ const PlaceOrder = () => {
       ]}
 
       buttonsArray={[
-
         {
-          color: "error",
-          icon: <DeleteIcon />,
-          text: "Clear",
-          // onClick: handleDeleteCustomer,
+          color: "success",
+          icon: <AddShoppingCartRoundedIcon />,
+          text: "Add to Cart",
+          // onClick: handleSaveCustomer,
         },
 
         {
-          color: "success",
-          icon: <AddCircleIcon />,
-          text: "Add to Cart",
-          // onClick: handleSaveCustomer,
+          color: "error",
+          icon: <BackspaceIcon />,
+          text: "Clear",
+          // onClick: handleDeleteCustomer,
         },
 
       ]}
@@ -223,9 +238,53 @@ const PlaceOrder = () => {
 
         </div>
 
+        <div className='absolute left-0 right-0 bottom-20 m-auto h-24 w-3/4 bg-yellow-200 shadow-lg rounded-lg shadow-black flex space-x-20 items-center justify-start'>
+          <div>
+          <label className='text-2xl font-serif font-bold text-red-700 ml-3'>Total (Rs.) : </label>
+          <label className='text-xl font-serif font-bold text-red-700 ml-3'>0.00</label>
+          </div>
+
+          <div>
+          <label className='text-xl font-serif font-bold ml-3'>Discount (%): </label>
+          <Input className='text-lg font-serif font-bold text-red-700 ml-3' defaultValue={'%'} type='Number'></Input>
+          </div>
+
+          <div>
+          <label className='text-2xl font-serif font-bold text-red-700 ml-3'>Sub Total (Rs.) : </label>
+          <label className='text-xl font-serif font-bold text-red-700 ml-7'>0.00</label>
+          </div>
         </div>
 
-      </section>
+        <div className='relative top-28 left-0 right-0 m-auto w-11/12 h-1/3 block'>
+      <Table
+          tblName="Cart"
+          tblHeight="auto"
+          tblHeaders={[
+            "Item Code",
+            "Description",
+            "Unit Price",
+            "Qty",
+            "Total",
+            "---"
+          ]}
+          tblData={allCustomersList.map((customerArray) => customerArray)}
+          handleTblRowClick={handleTableRowClick}
+        />
+
+      
+      </div>   
+      
+    </div>
+    <div className='absolute w-48 h-24 mt-32 mb-12 right-14 pb-16 text-xl'>
+
+          <button className='absolute top-2/4 bottom-0 left-9 right-0 m-auto text-lg bg-green-600 text-white font-sans font-bold rounded-lg shadow-black shadow-xl'>
+            PLACE ORDER
+          </button>
+
+    </div>
+    </section>
+
+     
 
     </>
 
