@@ -24,12 +24,23 @@ const Form = (props) => {
       <form className="grid grid-cols-1 lg:grid-cols-3 gap-6 !font-poppins">
         {props.textFieldsArray.map((textField, index) => (
           textField.textFieldType == "select" ? <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Customer ID</InputLabel>
+          <InputLabel id="demo-simple-select-label"></InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={Select.value}
             label={Select.label}
+            key={index}
+            variant="outlined"
+            name={Select.name}
+            placeholder={Select.placeHolderText}
+            required
+            defaultValue={Select.defaultValue}
+            onChange={Select.onChange}
+            focused={Select.focused}
+            InputProps={{
+              readOnly: Select.readOnly,
+            }}
             // onChange={handleChange}
           >
             {/* <MenuItem value={10}>Ten</MenuItem>
