@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import axios from '../axios/index'
 import Header from '../components/Layout/Header'
 import Form from '../components/Form/Form'
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -9,32 +10,39 @@ import Table from '../components/Table/Table';
 import { Link } from 'react-router-dom';
 
 const Customer = () => {
-  const [allCustomersList, setAllCustomersList] = useState([]);
+  const [allCustomersList, setAllCustomersList] = useState([[]]);
 
   const handleTableRowClick = (tableRow) => {
     console.log(tableRow);
   }
 
-  // useEffect(() => {
-  //   let customerArray = [
-  //     [
-  //       "C001", "Kamal", "Galle", "077777777"
-  //     ],
+  useEffect(() => {
+    axios.get("customer")
+    .then((res) => {
+      let allCustomers = [];
+      for(let i=0; i<res.data.length; i++){
+        allCustomers.push([
+          res.data[i].cId,
+          res.data[i].name,
+          res.data[i].address,
+          res.data[i].contact,
+          res.data[i].email,
+        ]);
+      }
 
-  //     [
-  //       "C001", "Kamal", "Galle", "077777777"
-  //     ],
-  //   ];
+      setAllCustomersList(allCustomers);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+   }, []);
 
-  //   setAllCustomersList(customerArray)
-  // });
-
-  const tblHeaders = ["Header 1", "Header 2", "Header 3"];
-  const tblData = [
-    ["Data 1", "Data 2", "Data 3"],
-    ["Data 4", "Data 5", "Data 6"],
-    // Add more data rows as needed
-  ];
+  // const tblHeaders = ["Header 1", "Header 2", "Header 3"];
+  // const tblData = [
+  //   ["Data 1", "Data 2", "Data 3"],
+  //   ["Data 4", "Data 5", "Data 6"],
+  //   // Add more data rows as needed
+  // ];
   const tableHeight = "300px"; // Adjust the height as needed
 
   return (
