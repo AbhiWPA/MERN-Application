@@ -65,7 +65,8 @@ class CustomerController {
 
     getCustomerById = async(req, res) => {
         try {
-            const customer = await Customer.findOne();
+            const custId = req.params.customerId;
+            const customer = await Customer.findOne({cId : custId});
             console.log("Sent Customer Data");
             res.send(customer);
         } catch (error) {
