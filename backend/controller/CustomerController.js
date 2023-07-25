@@ -5,18 +5,14 @@ class CustomerController {
 
     //get all customers
     getAllCustomers = async(req, res) => {
-        // try{
-        //     // let allCustomers = await Customer.find();
-        //     let allCustomers = [{id:"C001", name:"Kamal"}, {id:"C002", name:"Nimal"}];
-        //     return res.status(200).json({message: "Load All Customers", response: allCustomers});
-
-        // }catch(error){
-        //     if(error instanceof Error){
-        //         return res.status(500).json({message: error.message});
-        //     }else{
-        //         return res.status(500).json({message: "Unknown Error Occured..!"});
-        //     }
+        try {
+            const customerList = await Customer.find();
+            console.log("Sent Customer Data list");
+            res.send(customerList);
+        } catch (error) {
+            return error
         }
+    }
 
     //save customers
     saveCustomer = async(req, res) => {
@@ -27,13 +23,22 @@ class CustomerController {
 
     //update customer
     updateCustomer = async(req, res) => {
-        const cID = req.params.customerID; // Access cID from URL parameters, not query parameters
+        const cID = req.params.customerID;
         console.log('req customer ID : ', cID);
+    
+        const updateData = req.body;
 
-        Customer.findOneAndUpdate({ cId: cID })
-            .then(() => {
+        Customer.findOneAndUpdate({ cId: cID }, updateData, { new: true })
+            .then((updatedCustomer) => {
+                if (!updatedCustomer) {
+                    return res.status(404).json({
+                        error: "Customer not found"
+                    });
+                }
+    
                 return res.status(200).json({
-                    success: "update successfully"
+                    success: "Update successfully",
+                    customer: updatedCustomer
                 });
             })
             .catch((err) => {
@@ -43,12 +48,32 @@ class CustomerController {
             });
     }
 
-    // //update customers
-    // updateCustomer = async(req, res) => {
-    //     console.log("upadete customer req :", req.body);
-        
-    // }
+    deleteCustomer = async(req, res) => {
+        const custId = req.params.customerId;
+        console.log("req delete customer id : ", custId);
+
+        Customer.findOneAndDelete({cId: custId})
+            .then(() => {
+                return res.status(200).json({
+                    success: "Delete successfully"
+                });
+            })
+            .catch(err => {
+                return res.status(400).json({ error: err });
+            });
     }
+
+    getCustomerById = async(req, res) => {
+        try {
+            const customer = await Customer.findOne();
+            console.log("Sent Customer Data");
+            res.send(customer);
+        } catch (error) {
+            return error
+        }
+    }
+
+}
 
 
 module.exports = CustomerController;
