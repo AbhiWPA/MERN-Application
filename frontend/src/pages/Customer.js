@@ -11,12 +11,25 @@ import { Link } from 'react-router-dom';
 
 const Customer = () => {
   const [allCustomersList, setAllCustomersList] = useState([[]]);
+  const [customerID, setCustomerID] = useState("");
+  const [cusName, setCusName] = useState("");
+  const [cusAddress, setCusAddress] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleTableRowClick = (tableRow) => {
-    console.log(tableRow);
+    setCustomerID(tableRow[0]);
+    setCusName(tableRow[1]);
+    setCusAddress(tableRow[2]);
+    setContactNumber(tableRow[3]);
+    setEmail(tableRow[4]);
   }
 
   useEffect(() => {
+    getAllCustomers();
+   }, []);
+
+   const getAllCustomers = () => {
     axios.get("customer")
     .then((res) => {
       let allCustomers = [];
@@ -35,14 +48,89 @@ const Customer = () => {
     .catch((error) => {
       console.log(error);
     })
-   }, []);
+   }
 
-  // const tblHeaders = ["Header 1", "Header 2", "Header 3"];
-  // const tblData = [
-  //   ["Data 1", "Data 2", "Data 3"],
-  //   ["Data 4", "Data 5", "Data 6"],
-  //   // Add more data rows as needed
-  // ];
+   const clearAllFields = () => {
+    setCustomerID("");
+    setCusName("");
+    setCusAddress("");
+    setContactNumber("");
+    setEmail("");
+   }
+
+   // Save Customer
+   const handleSaveCustomer = () => {
+    let newCustomer = {
+      cId: customerID,
+      name: cusName,
+      address: cusAddress,
+      contact: contactNumber,
+      email: email,
+    };
+
+    axios.post('customer/saveCustomer' , newCustomer, {
+        headers: {
+        'Content-Type': 'application/json'
+        }
+    })
+    .then((res) => {
+      getAllCustomers();
+      clearAllFields();
+      alert(res.data);
+    })
+    .catch((error) => {
+      console.log(error);
+      clearAllFields();
+    })
+   };
+
+    // Update Customer
+    const handleUpdateCustomer = () => {
+      let customer = {
+        cId: customerID,
+        name: cusName,
+        address: cusAddress,
+        contact: contactNumber,
+        email: email,
+      };
+
+      axios.put('customer/updateCustomer/'+customerID, customer, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+
+      }).then((res) => {
+        getAllCustomers();
+        clearAllFields();
+        alert(res.data.success);
+      })
+      .catch((error) => {
+        console.log(error);
+        clearAllFields();
+      })
+     };
+
+    // Delete Customer
+    const handleDeleteCustomer = () => {
+      if(customerID !== ""){
+        axios.delete('customer/deleteCustomer/'+customerID)
+
+        .then((res) => {
+          getAllCustomers();
+          clearAllFields();
+          alert(res.data.success);
+        })
+
+        .catch((error) => {
+          console.log(error);
+          clearAllFields();
+        })
+      } else {
+        alert("Please enter a customer ID");
+      }
+    };
+
+   
   const tableHeight = "300px"; // Adjust the height as needed
 
   return (
@@ -67,20 +155,20 @@ const Customer = () => {
               textFieldType: "text",
               name: "customerId",
               placeHolderText: "Customer ID",
-              // value: customerID,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setCustomerID(event.target.value);
-              //},
+              value: customerID,
+              onChange: (e) => {
+                setCustomerID(e.target.value);
+              },
             },
             {
               label: "Name",
               textFieldType: "text",
               name: "name",
               placeHolderText: "name",
-              // value: username,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setUsername(event.target.value);
-              // },
+              value: cusName,
+              onChange: (event) => {
+                setCusName(event.target.value);
+              },
             },
             
             
@@ -89,30 +177,30 @@ const Customer = () => {
               textFieldType: "text",
               name: "address",
               placeHolderText: "Address",
-              // value: address,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setAddress(event.target.value);
-              // },
+              value: cusAddress,
+              onChange: (event) => {
+                setCusAddress(event.target.value);
+              },
             },
             {
               label: "Contact Number",
               textFieldType: "text",
               name: "contactNumber",
               placeHolderText: "Contact Number",
-              // value: contactNumber,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setContactNumber(event.target.value);
-              // },
+              value: contactNumber,
+              onChange: (event) => {
+                setContactNumber(event.target.value);
+              },
             },
             {
               label: "Email",
               textFieldType: "text",
               name: "email",
               placeHolderText: "Email",
-              // value: email,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setEmail(event.target.value);
-              // },
+              value: email,
+              onChange: (event) => {
+                setEmail(event.target.value);
+              },
             },
           ]}
           buttonsArray={[
@@ -120,25 +208,25 @@ const Customer = () => {
               color: "success",
               icon: <AddCircleIcon />,
               text: "Save",
-              // onClick: handleSaveCustomer,
+              onClick: handleSaveCustomer,
             },
             {
               color: "primary",
               icon: <AutorenewIcon />,
               text: "Update",
-              // onClick: handleUpdateCustomer,
+              onClick: handleUpdateCustomer,
             },
             {
               color: "error",
               icon: <DeleteIcon />,
               text: "Delete",
-              // onClick: handleDeleteCustomer,
+              onClick: handleDeleteCustomer,
             },
             {
               color: "warning",
               icon: <BackspaceIcon />,
               text: "Clear",
-              // onClick: handleClearFields,
+              onClick: clearAllFields,
             },
           ]}
         />

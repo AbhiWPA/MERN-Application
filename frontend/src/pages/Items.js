@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import axios from '../axios/index'
 import Header from '../components/Layout/Header'
 import { TextField } from '@mui/material'
 import Form from '../components/Form/Form'
@@ -10,32 +11,119 @@ import Table from '../components/Table/Table';
 import { Link } from 'react-router-dom';
 
 const Items = () => {
-  const [allCustomersList, setAllCustomersList] = useState([]);
+  const [allItemList, setAllItemList] = useState([[]]);
+  const [itemCode, setItemCode] = useState("");
+  const [description, setDescription] = useState("");
+  const [unitPrice, setUnitPrice] = useState(0);
+  const [qty, setQty] = useState(0);
 
   const handleTableRowClick = (tableRow) => {
-    console.log(tableRow);
+    setItemCode(tableRow[0]);
+    setDescription(tableRow[1]);
+    setUnitPrice(tableRow[2]);
+    setQty(tableRow[3]);
   }
 
-  // useEffect(() => {
-  //   let customerArray = [
-  //     [
-  //       "C001", "Kamal", "Galle", "077777777"
-  //     ],
+  useEffect(() => {
+    getAllItems();
+   }, []);
 
-  //     [
-  //       "C001", "Kamal", "Galle", "077777777"
-  //     ],
-  //   ];
+   const getAllItems = () => {
+    axios.get("item")
+    .then((res) => {
+      let allItems = [];
+      for(let i=0; i<res.data.length; i++){
+        allItems.push([
+          res.data[i].itemCode,
+          res.data[i].description,
+          res.data[i].unitPrice,
+          res.data[i].qty,
+        ]);
+      }
 
-  //   setAllCustomersList(customerArray)
-  // });
+      setAllItemList(allItems);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+   }
 
-  const tblHeaders = ["Header 1", "Header 2", "Header 3"];
-  const tblData = [
-    ["Data 1", "Data 2", "Data 3"],
-    ["Data 4", "Data 5", "Data 6"],
-    // Add more data rows as needed
-  ];
+   const clearAllFields = () => {
+    setItemCode("");
+    setDescription("");
+    setUnitPrice(0);
+    setQty(0);
+   }
+   
+   //save Item
+   const handleSaveItem = () => {
+    let newItem = {
+      itemCode: itemCode,
+      description: description,
+      unitPrice: unitPrice,
+      qty: qty,
+    }
+    axios.post('item/saveItem' , newItem, {
+      headers: {
+      'Content-Type': 'application/json'
+      }
+  })
+  .then((res) => {
+    getAllItems();
+    clearAllFields();
+    alert(res.data);
+  })
+  .catch((error) => {
+    console.log(error);
+    clearAllFields();
+  })
+  }
+
+  // Update Item
+  const handleUpdateItem = () => {
+    let item = {
+      itemCode: itemCode,
+      description: description,
+      unitPrice: unitPrice,
+      qty: qty,
+    };
+
+    axios.put('item/updateItem/'+itemCode, item, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+
+    }).then((res) => {
+      getAllItems();
+      clearAllFields();
+      alert(res.data.success);
+    })
+    .catch((error) => {
+      console.log(error);
+      clearAllFields();
+    })
+   };
+
+   const handleDeleteItem = () => {
+    if(itemCode !== ""){
+      axios.delete('item/deleteitem/'+itemCode)
+
+      .then((res) => {
+        getAllItems();
+        clearAllFields();
+        alert(res.data.success);
+      })
+
+      .catch((error) => {
+        console.log(error);
+        clearAllFields();
+      })
+    } else {
+      alert("Please enter a customer ID");
+    }
+   }
+
+   
   const tableHeight = "300px"; // Adjust the height as needed
 
   return (
@@ -65,40 +153,40 @@ const Items = () => {
               textFieldType: "text",
               name: "itemCode",
               placeHolderText: "Item Code",
-              // value: customerID,
-              // onChange: (event) => {
-              //   setCustomerID(event.target.value);
-              // },
+              value: itemCode,
+              onChange: (event) => {
+                setItemCode(event.target.value);
+              },
             },
             {
               label: "Description",
               textFieldType: "text",
               name: "description",
               placeHolderText: "Description",
-              // value: username,
-              // onChange: (event) => {
-              //   setUsername(event.target.value);
-              // },
+              value: description,
+              onChange: (event) => {
+                setDescription(event.target.value);
+              },
             },
             {
               label: "Unit Price",
               textFieldType: "text",
               name: "unitPrice",
               placeHolderText: "Rs. 0.00",
-              // value: password,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setPassword(event.target.value);
-              // },
+              value: unitPrice,
+              onChange: (event) => {
+                setUnitPrice(event.target.value);
+              },
             },
             {
               label: "Quantity",
               textFieldType: "Number",
               name: "qty",
               placeHolderText: "Quantity",
-              // value: customerName,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setCustomerName(event.target.value);
-              // },
+              value: qty,
+              onChange: (event) => {
+                setQty(event.target.value);
+              },
             }
           ]}
 
@@ -108,25 +196,25 @@ const Items = () => {
               color: "success",
               icon: <AddCircleIcon />,
               text: "Save",
-              // onClick: handleSaveCustomer,
+              onClick: handleSaveItem,
             },
             {
               color: "primary",
               icon: <AutorenewIcon />,
               text: "Update",
-              // onClick: handleUpdateCustomer,
+              onClick: handleUpdateItem,
             },
             {
               color: "error",
               icon: <DeleteIcon />,
               text: "Delete",
-              // onClick: handleDeleteCustomer,
+              onClick: handleDeleteItem,
             },
             {
               color: "warning",
               icon: <BackspaceIcon />,
               text: "Clear",
-              // onClick: handleClearFields,
+              onClick: clearAllFields,
             },
           ]}
 
@@ -148,7 +236,7 @@ const Items = () => {
             "Unit Price",
             "Quantity",
           ]}
-          tblData={allCustomersList.map((customerArray) => customerArray)}
+          tblData={allItemList.map((itemArray) => itemArray)}
           handleTblRowClick={handleTableRowClick}
         />
       </div>
