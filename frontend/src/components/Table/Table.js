@@ -68,7 +68,8 @@ const Table = ({tblName,
             </thead>
 
             <tbody style={tableHeight} className="cursor-pointer">
-              {tblData.map((dataRow, index) => (
+              { tblData ?
+              tblData.map((dataRow, index) => (
                 <tr
                   onClick={() => handleRowClick(dataRow)}
                   key={index}
@@ -109,7 +110,8 @@ const Table = ({tblName,
                     </td>
                   ))}
                 </tr>
-              ))}
+              )) : null
+              }
             </tbody>
           </table>
         </div>

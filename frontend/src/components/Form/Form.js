@@ -23,26 +23,32 @@ const Form = (props) => {
     <section className="pb-6 px-6 lg:px-12">
       <form className="grid grid-cols-1 lg:grid-cols-3 gap-6 !font-poppins">
         {props.textFieldsArray.map((textField, index) => (
-          textField.textFieldType == "select" ? <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label"></InputLabel>
+          textField.textFieldType == "select" ? 
+          <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">{textField.label}</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={Select.value}
-            label={Select.label}
+            value={textField.value}
+            label={textField.label}
             key={index}
             variant="outlined"
-            name={Select.name}
-            placeholder={Select.placeHolderText}
+            name={textField.name}
+            placeholder={textField.placeHolderText}
             required
-            defaultValue={Select.defaultValue}
-            onChange={Select.onChange}
-            focused={Select.focused}
-            InputProps={{
-              readOnly: Select.readOnly,
-            }}
-            // onChange={handleChange}
+            defaultValue={textField.defaultValue}
+            onChange={textField.onChange}
           >
+
+           {
+            textField.menuItems ? 
+            textField.menuItems.map((customerID) => (
+              <MenuItem key={customerID} value={customerID}>{customerID}</MenuItem>
+            )) :
+            null
+          }
+
+          
             {/* <MenuItem value={10}>Ten</MenuItem>
             <MenuItem value={20}>Twenty</MenuItem>
             <MenuItem value={30}>Thirty</MenuItem> */}

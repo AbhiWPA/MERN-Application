@@ -8,22 +8,182 @@ import AddShoppingCartRoundedIcon from '@mui/icons-material/AddShoppingCartRound
 import { Link } from 'react-router-dom';
 import { Button, Input} from '@mui/material';
 import ConfirmationNumberRoundedIcon from '@mui/icons-material/ConfirmationNumberRounded';
+import axios from '../axios/index';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
 
 const PlaceOrder = () => {
 
-  const [allCustomersList, setAllCustomersList] = useState([]);
+  const [allCustomerIds, setAllCustomerIds] = useState([]);
+  const [allItemCodes, setAllItemCodes] = useState([]);
+  const [cusName, setCusName] = useState("");
+  const [cusAddress, setCusAddress] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [itemCode, setitemCode] = useState("");
+  const [description, setDescription] = useState("");
+  const [unitPrice, setUnitPrice] = useState(0);
+  const [qty, setQty] = useState(0);
+  const [orderQty, setOrderQty] = useState(0);
+
+  const [total, setTotal] = useState(0)
+  const [discount, setDiscount] = useState(0)
+  const [subTotal, setSubTotal] = useState(0)
+
+  const [cartItemList, setcartItemList] = useState([]);
+
+
+  const generateTotal = () => {
+    const tot = unitPrice*orderQty;
+    setTotal(tot);
+    //alert(tot);
+    generateSubTotal(tot, 0);
+  }
+
+  const generateSubTotal = (x, disc) => {
+    //alert(x);
+    const discountPrice = x*disc/100;
+    // alert(disc)
+    // setDiscount(disc)
+    const subTot = x - discountPrice;
+    setSubTotal(subTot);
+  }
+
+  useEffect(() => {
+    getAllCustomerIds();
+    getAllItemCodes();
+  }, []);
+
+
+  const getAllItemCodes = () => {
+    axios.get("item")
+    .then((res) => {
+      let allItemCodes = [];
+      for(let i=0; i<res.data.length; i++){
+        allItemCodes.push(
+          res.data[i].itemCode,
+        );
+      }
+
+      setAllItemCodes(allItemCodes);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  }
+
+
+  const getAllCustomerIds = () => {
+    axios.get("customer")
+    .then((res) => {
+      let allCustomerIds = [];
+      for(let i=0; i<res.data.length; i++){
+        allCustomerIds.push(
+          res.data[i].cId,
+        );
+      }
+
+      setAllCustomerIds(allCustomerIds);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+   }
+
+   const handleChangeCustomerID = (event) => {
+    const selectedValue = event.target.value;
+      if(selectedValue !== ""){
+        
+        axios.get('customer/getCustomerById/'+selectedValue)
+        .then((res) => {
+          
+          setCustomerDetails(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          // clearAllFields();
+        })
+      } else {
+        alert("Please enter a customer ID");
+      }
+   }
+
+   const setCustomerDetails = (CustomerData) => {
+
+    setCusName(CustomerData.name)
+    setCusAddress(CustomerData.address)
+    setContactNumber(CustomerData.contact)
+    setEmail(CustomerData.email)
+
+   }
+
+
+   const handleChangeItemCode = (event) => {
+    const selectedValue = event.target.value;
+      if(selectedValue !== ""){
+        setitemCode(selectedValue)
+        axios.get('item/getItemByCode/'+selectedValue)
+        .then((res) => {
+          
+          setItemDetails(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          // clearAllFields();
+        })
+      } else {
+        alert("Please enter a Item Code");
+      }
+   }
+
+
+   const setItemDetails = (itemData) => {
+    setDescription(itemData.description)
+    setUnitPrice(itemData.unitPrice)
+    setQty(itemData.qty)
+   }
+   
 
   const handleTableRowClick = (tableRow) => {
     console.log(tableRow);
   }
 
-  const tblHeaders = ["Header 1", "Header 2", "Header 3"];
-  const tblData = [
-    ["Data 1", "Data 2", "Data 3"],
-    ["Data 4", "Data 5", "Data 6"],
-    // Add more data rows as needed
-  ];
+  const setCartDetails = () => {
+   
+    // const cart = {
+    //   itemCode : itemCode,
+    //   description : description,
+    //   unitPrice : unitPrice,
+    //   qty : orderQty,
+    //   total : subTotal,
+    //   Option : <button><DeleteIcon /></button>
+    // }
+
+    const tot = total+(unitPrice*orderQty);
+    setTotal(tot);
+
+    const subTot = tot - discount;
+    setSubTotal(subTot);
+
+    cartItemList.push([
+      itemCode,
+      description,
+      unitPrice,
+      orderQty,
+      (unitPrice*orderQty),
+      <div className='flex space-x-2'><button className='bg-red-600 rounded-md shadow-md shadow-black'><DeleteIcon className='text-white m-1'/></button><button className='bg-cyan-900 rounded-md shadow-md shadow-black'><ModeEditIcon className='text-white m-1'/></button></div>
+    ]);
+
+    // cartItemList.push([itemCode,
+    //   description,
+    //   unitPrice,
+    //   orderQty,
+    //   subTotal,
+    //   <button><DeleteIcon /></button>]);
+  }
+
+  
 
 const tableHeight = "300px";
 
@@ -79,20 +239,17 @@ const tableHeight = "300px";
               textFieldType: "select",
               name: "customerId",
               placeHolderText: "Customer ID",
-              // value: customerID,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setCustomerID(event.target.value);
-              //},
+              menuItems: allCustomerIds,
+              label: "Customer ID",
+              onChange: handleChangeCustomerID,
+              
             },
             {
               label: "Name",
               textFieldType: "text",
               name: "name",
               placeHolderText: "name",
-              // value: username,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setUsername(event.target.value);
-              // },
+              value: cusName
             },
             
             
@@ -101,30 +258,21 @@ const tableHeight = "300px";
               textFieldType: "text",
               name: "address",
               placeHolderText: "Address",
-              // value: address,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setAddress(event.target.value);
-              // },
+              value: cusAddress
             },
             {
               label: "Contact Number",
               textFieldType: "text",
               name: "contactNumber",
               placeHolderText: "Contact Number",
-              // value: contactNumber,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setContactNumber(event.target.value);
-              // },
+              value: contactNumber
             },
             {
               label: "Email",
               textFieldType: "text",
               name: "email",
               placeHolderText: "Email",
-              // value: email,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setEmail(event.target.value);
-              // },
+              value: email
             },
 
           ]}
@@ -163,17 +311,17 @@ const tableHeight = "300px";
           textFieldType: "select",
           name: "itemCode",
           placeHolderText: "Item Code",
-          // value: customerID,
-          // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-          //   setCustomerID(event.target.value);
-          //},
+          menuItems: allItemCodes,
+          label: "Item Code",
+          value: itemCode,
+          onChange: handleChangeItemCode,
        },
         {
           label: "Description",
           textFieldType: "text",
           name: "description",
           placeHolderText: "description",
-          // value: username,
+          value: description,
           // onChange: (event: ChangeEvent<HTMLInputElement>) => {
           //   setUsername(event.target.value);
           // },
@@ -185,7 +333,7 @@ const tableHeight = "300px";
           textFieldType: "text",
           name: "unitPrice",
           placeHolderText: "unitPrice",
-          // value: address,
+          value: unitPrice,
          // onChange: (event: ChangeEvent<HTMLInputElement>) => {
          //   setAddress(event.target.value);
           // },
@@ -196,7 +344,7 @@ const tableHeight = "300px";
           name: "qtyOnHand",
           placeHolderText: "QTY On Hand",
           readOnly : true,
-          // value: contactNumber,
+          value: qty,
           // onChange: (event: ChangeEvent<HTMLInputElement>) => {
           //   setContactNumber(event.target.value);
           // },
@@ -207,9 +355,9 @@ const tableHeight = "300px";
           name: "qtyForOrder",
           placeHolderText: "Qty For Order",
           // value: email,
-          // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-          //   setEmail(event.target.value);
-         // },
+          onChange: (event) => {
+            setOrderQty(event.target.value);
+         },
         },
       ]}
 
@@ -218,7 +366,7 @@ const tableHeight = "300px";
           color: "success",
           icon: <AddShoppingCartRoundedIcon />,
           text: "Add to Cart",
-          // onClick: handleSaveCustomer,
+          onClick: setCartDetails,
         },
 
         {
@@ -238,20 +386,32 @@ const tableHeight = "300px";
 
         </div>
 
-        <div className='absolute left-0 right-0 bottom-20 m-auto h-24 w-3/4 bg-yellow-200 shadow-lg rounded-lg shadow-black flex space-x-20 items-center justify-start'>
+        <div className='absolute left-0 right-0 bottom-20 m-auto h-24 w-fit bg-yellow-200 shadow-lg rounded-lg shadow-black flex space-x-20 items-center justify-start'>
           <div>
           <label className='text-2xl font-serif font-bold text-red-700 ml-3'>Total (Rs.) : </label>
-          <label className='text-xl font-serif font-bold text-red-700 ml-3'>0.00</label>
+          <label className='text-xl font-serif font-bold text-red-700 ml-3' defaultValue={'0.00'} type='Number' onChange={(event) => {
+            setTotal(event.target.value);
+         }}>{total+".00"}</label>
           </div>
 
           <div>
           <label className='text-xl font-serif font-bold ml-3'>Discount (%): </label>
-          <Input className='text-lg font-serif font-bold text-red-700 ml-3' defaultValue={'%'} type='Number'></Input>
+          <Input className='text-lg font-serif font-bold text-red-700 ml-3' defaultValue={'%'} type='Number'
+          onChange={(event) => {
+            setDiscount(event.target.value);
+            // console.log(event.target.value);
+            generateSubTotal(total, event.target.value);
+         }}
+          ></Input>
           </div>
 
           <div>
           <label className='text-2xl font-serif font-bold text-red-700 ml-3'>Sub Total (Rs.) : </label>
-          <label className='text-xl font-serif font-bold text-red-700 ml-7'>0.00</label>
+          <label className='text-xl font-serif font-bold text-red-700 ml-7 mr-4' type='Number'
+          onChange={(event) => {
+            setSubTotal(event.target.value);
+         }}
+          >{subTotal+".00"}</label>
           </div>
         </div>
 
@@ -265,10 +425,10 @@ const tableHeight = "300px";
             "Unit Price",
             "Qty",
             "Total",
-            "---"
+            "Options"
           ]}
-          tblData={allCustomersList.map((customerArray) => customerArray)}
-          handleTblRowClick={handleTableRowClick}
+          tblData={cartItemList.map((cartArray) => cartArray)}
+         // handleTblRowClick={handleTableRowClick}
         />
 
       
