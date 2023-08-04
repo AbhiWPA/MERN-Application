@@ -14,7 +14,7 @@ const Home = () => {
       <div className='relative' style={{objectFit: 'cover', height: '555px', marginTop: '-17px'}}>
 
                   <div id="carouselExampleCaptions" className="carousel slide h-fit" style={{objectFit: 'cover', height: '555px'}}>
-                  <button className='!bg-green-700 shadow-black shadow-xl' style={{position:'absolute', width:'200px', height:'40px', top:'212px', bottom:'0', left:'0', right:'0', margin: 'auto', zIndex: '1'}}><Link to={'/placeOrder'} className='!text-white text-xl font-bold font-serif'>Place Order</Link></button>
+                  <button className='!bg-green-700 shadow-black shadow-xl' style={{position:'absolute', width:'200px', height:'40px', top:'212px', bottom:'0', left:'0', right:'0', margin: 'auto', zIndex: '1'}}><Link to={'/order'} className='!text-white text-xl font-bold font-serif'>Place Order</Link></button>
                     <div className="carousel-indicators">
                       <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                       <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>

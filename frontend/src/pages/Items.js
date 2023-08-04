@@ -133,7 +133,7 @@ const Items = () => {
       <section>
         <div style={{display: 'inline-block', marginTop: '10px'}}>
           <h2 className='ml-6 text-3xl text-red-700 font-bold font-sans inline-block shadow-black shadow-lg'>MANAGE ITEMS</h2>
-          <button className='!bg-green-700 shadow-black shadow-lg absolute right-0 m-auto' style={{width:'200px', height:'40px'}}><Link to={'/placeOrder'} className='!text-white text-xl font-bold font-serif'>Place Order</Link></button>
+          <button className='!bg-green-700 shadow-black shadow-lg absolute right-0 m-auto' style={{width:'200px', height:'40px'}}><Link to={'/order'} className='!text-white text-xl font-bold font-serif'>Place Order</Link></button>
         </div>
 
         <div className='absolute top-40 left-0 right-0 m-auto ms-auto shadow-lg shadow-black h-56 w-4/5 rounded-lg'>

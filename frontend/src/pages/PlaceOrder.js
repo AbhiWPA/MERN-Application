@@ -17,6 +17,8 @@ const PlaceOrder = () => {
 
   const [allCustomerIds, setAllCustomerIds] = useState([]);
   const [allItemCodes, setAllItemCodes] = useState([]);
+  const [orderID, setOrderID] = useState("");
+  const [orderDate, setorderDate] = useState("");
   const [cusName, setCusName] = useState("");
   const [cusAddress, setCusAddress] = useState("");
   const [contactNumber, setContactNumber] = useState("");
@@ -39,6 +41,19 @@ const PlaceOrder = () => {
     setTotal(tot);
     //alert(tot);
     generateSubTotal(tot, 0);
+  }
+
+  const clearAllFields = () => {
+    setOrderID("");
+    setorderDate(Date.now);
+    setCusName("");
+    setCusAddress("");
+    setContactNumber("");
+    setEmail("");
+    setDescription("");
+    setUnitPrice("");
+    setQty("");
+    setOrderQty("")
   }
 
   const generateSubTotal = (x, disc) => {
@@ -183,6 +198,56 @@ const PlaceOrder = () => {
     //   <button><DeleteIcon /></button>]);
   }
 
+  // Save Order
+  const handleSaveOrder = () => {
+    let newOrder = {
+      orderId: orderID,
+      date: orderDate,
+      total: total,
+      discount: discount,
+      subTotal: subTotal,
+    };
+
+    axios.post('order/placeOrder' , newOrder, {
+        headers: {
+        'Content-Type': 'application/json'
+        }
+    })
+    .then((res) => {
+      clearAllFields();
+      alert(res.data);
+    })
+    .catch((error) => {
+      console.log(error);
+      clearAllFields();
+    })
+   };
+
+
+  //  const saveOrderDetails = () => {
+  //   let newOrder = {
+  //     orderId: orderID,
+  //     date: orderDate,
+  //     total: total,
+  //     discount: discount,
+  //     subTotal: subTotal,
+  //   };
+
+  //   axios.post('order/placeOrder' , newOrder, {
+  //       headers: {
+  //       'Content-Type': 'application/json'
+  //       }
+  //   })
+  //   .then((res) => {
+  //     clearAllFields();
+  //     alert(res.data);
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //     clearAllFields();
+  //   })
+  //  };
+
   
 
 const tableHeight = "300px";
@@ -217,10 +282,10 @@ const tableHeight = "300px";
               textFieldType: "text",
               name: "name",
               placeHolderText: "OrderID",
-              // value: username,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setUsername(event.target.value);
-              // },
+              value: orderID,
+              onChange: (event) => {
+                setOrderID(event.target.value);
+              },
             },
 
             {
@@ -228,10 +293,10 @@ const tableHeight = "300px";
               textFieldType: "Date",
               name: "date",
               placeHolderText: "Date",
-              // value: username,
-              // onChange: (event: ChangeEvent<HTMLInputElement>) => {
-              //   setUsername(event.target.value);
-              // },
+              value: orderDate,
+              onChange: (event) => {
+                setorderDate(event.target.value);
+              },
             },
 
             {
@@ -437,7 +502,11 @@ const tableHeight = "300px";
     </div>
     <div className='absolute w-48 h-24 mt-32 mb-12 right-14 pb-16 text-xl'>
 
-          <button className='absolute top-2/4 bottom-0 left-9 right-0 m-auto text-lg bg-green-600 text-white font-sans font-bold rounded-lg shadow-black shadow-xl'>
+          <button className='absolute top-2/4 bottom-0 left-9 right-0 m-auto text-lg bg-green-600 text-white font-sans font-bold rounded-lg shadow-black shadow-xl'
+          onClick={(event) => {
+            handleSaveOrder();
+         }}
+          >
             PLACE ORDER
           </button>
 
